@@ -1,0 +1,46 @@
+<!-- MAIN HTM FILE -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Import the head section ejs file -->
+    <%- include("./partials/head"); %>
+</head>
+<body>
+    <!-- NAVIAGTION SECTION -->
+    <header>
+        <!-- Import the header/nav section ejs file -->
+    <%- include("./partials/nav"); %>
+    </header>
+
+    <!-- MAIN BODY SECTION -->
+    <main>
+        <!-- LOG IN FORM SECTION -->
+        <!-- BOOTSRTAPPED FORM -->
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-4 ">CREATE PROFILE</h5>
+            <form action="/login" method="POST" id="login">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+    </main>
+    
+
+    <footer>
+        <!-- Import the FOOT  section ejs file -->
+    <%- include("./partials/footer"); %>
+    </footer>
+</body>
+</html>

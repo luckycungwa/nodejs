@@ -1,0 +1,1 @@
+<p class="text-center text-muted">WELCOME TO YOUR PROFILE PAGE!</p>
