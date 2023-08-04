@@ -11,26 +11,26 @@ app.use(morgan("dev")); // our predefined formats are : tiny, dev, short, common
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public"))); //Serves static files from the 'public' directory|| array
 
+// firebase stuff
+const admin = require("firebase-admin");
+const credentials = require("./key.json");
+
+admin.initializeApp({ credentials: admin.credential.cert(credentials) });
+// setup database stuff
+const db = admin.firestore();
+app.use(express.json());
+
 // Use Firebase bd to manage users
 const users = [
   { id: 1, username: "user1@mlab.com", password: "password1" },
   { id: 2, username: "user2@mlab.com", password: "password2" },
 ];
 
- // STORING IMAGE IN AN ARRAY
- const images = [
-  "./image1.jpg",
-  "./image1.jpg",
-  "./image1.jpg",
-];
+// STORING IMAGE IN AN ARRAY
+const images = ["./image1.jpg", "./image1.jpg", "./image1.jpg"];
 
- // STORE VIDEOS IN ARRAY
- const videos = [
-  "./pexels-vid.mp4",
-  "./pexels-vid.mp4",
-  "./pexels-vid.mp4",
-  
-];
+// STORE VIDEOS IN ARRAY
+const videos = ["./pexels-vid.mp4", "./pexels-vid.mp4", "./pexels-vid.mp4"];
 
 // i will log important events in during runtime instead of start & end
 function logRunPoints(event) {
@@ -41,7 +41,6 @@ function logRunPoints(event) {
 function getUserImages(userId) {
   return new Promise((resolve) => {
     setTimeout(() => {
-     
       resolve(images);
     }, 1500); //get images 1.5s
   });
@@ -50,7 +49,6 @@ function getUserImages(userId) {
 function getUserVideos(userId) {
   return new Promise((resolve) => {
     setTimeout(() => {
-     
       resolve(videos);
     }, 2000); //get images 2s (delayed 5ms after the images)
   });
@@ -78,38 +76,43 @@ app.get("/", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  res.render('profile', { images, videos });
-
+  res.render("profile", { images, videos });
 });
 
-// MAIN LOGIN HANDLER || ASYNC with tryCatch error approacj
-app.post("/login", async (req, res) => {
+// POST ENDPOINT | MAIN LOGIN HANDLER || ASYNC with tryCatch error approach
+app.post("/profile", async (req, res) => {
   try {
-    // start
-    // logRunPoints('Creating Profile');
-    const { email, password } = req.body; //get user data from the form body/fields
+    const userProfile = {
+      email: req.body.email,
+      password: req.body.password, //encrypt password if not testing
+    };
 
-    // simulate async operation with timeout | db requests
-    await asyncTimer();
-    //   validate credentials within dummy users (must use Db later)
-    const user = users.find(
-      (u) => u.username === email && u.password === password
-    );
+    const response = await db.collection("Users").add(userProfile);
 
-    // if credentials match send user to new success page or handle erros
-    if (email != "user1@mlab.com" && password != "password") {
-      logRunPoints("Login Successful");
-      // res.render('profile', { message: 'LOG IN SUCCESSFUL!', email: email });
-      loadUserInfo();
-    } else {
-      logRunPoints("Invalid credentials. Try Again!");
-      // res.render('home', { message: 'Login Failed. Try Again!' });
-      // logRunPoints(`username was: ${u.username}`);
-    }
+    logRunPoints("Data Recorded on db");
+    // validate credentials within dummy users (must use Db later)
+    // const user = users.find(
+    //   (u) => u.username === email && u.password === password
+    // );
+
+    // // if credentials match send user to new success page or handle erros
+    // if (email != "user1@mlab.com" && password != "password") {
+    //   logRunPoints("Login Successful");
+    //   // res.render('profile', { message: 'LOG IN SUCCESSFUL!', email: email });
+    //   loadUserInfo();
+    // } else {
+    //   logRunPoints("Invalid credentials. Try Again!");
+    //   // res.render('home', { message: 'Login Failed. Try Again!' });
+    //   // logRunPoints(`username was: ${u.username}`);
+    // }
+    // Redirect to profile page or do something else after successful addition
+    //res.redirect("/profile");
+    res.send(response);
   } catch (error) {
     logRunPoints("Error: Login failed!");
     console.error(error);
-    // return home/ refresh to try again
+    // Handle the error gracefully, e.g., render an error page
+    
     // res.render('home', { message: 'An error occurred. Please try again later.' });
     res.end();
   }
