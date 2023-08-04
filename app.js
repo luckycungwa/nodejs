@@ -17,6 +17,21 @@ const users = [
   { id: 2, username: "user2@mlab.com", password: "password2" },
 ];
 
+ // STORING IMAGE IN AN ARRAY
+ const images = [
+  "./image1.jpg",
+  "./image1.jpg",
+  "./image1.jpg",
+];
+
+ // STORE VIDEOS IN ARRAY
+ const videos = [
+  "./pexels-vid.mp4",
+  "./pexels-vid.mp4",
+  "./pexels-vid.mp4",
+  
+];
+
 // i will log important events in during runtime instead of start & end
 function logRunPoints(event) {
   console.log(`Event: ${event}`);
@@ -26,14 +41,7 @@ function logRunPoints(event) {
 function getUserImages(userId) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      // STORING IMAGE IN AN ARRAY
-      const images = [
-        // accept png & jpg
-        "./img/image1.png",
-        "./img/image2.png",
-        "./img/image3.png",
-        "./img/image4.png",
-      ];
+     
       resolve(images);
     }, 1500); //get images 1.5s
   });
@@ -42,14 +50,7 @@ function getUserImages(userId) {
 function getUserVideos(userId) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      // STORE VIDEOS IN ARRAY
-      const videos = [
-        // formarts mp4, 3gp, avi etc
-        "video1.mp4",
-        "video2.3gp",
-        "video3.avi",
-        "video4.mov",
-      ];
+     
       resolve(videos);
     }, 2000); //get images 2s (delayed 5ms after the images)
   });
@@ -74,6 +75,11 @@ async function loadUserInfo() {
 // Routes
 app.get("/", (req, res) => {
   res.render("home", { message: "CREATE PROFILE" });
+});
+
+app.get("/profile", (req, res) => {
+  res.render('profile', { images, videos });
+
 });
 
 // MAIN LOGIN HANDLER || ASYNC with tryCatch error approacj

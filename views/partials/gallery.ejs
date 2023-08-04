@@ -1,0 +1,45 @@
+    <!-- gallery SECTION -->
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+
+      <div class="container-fluid">
+        <!--  -->
+        <div class="px-lg-5">
+          
+          
+          </div>
+          <!-- IMAGE GALLERY -->
+          <div class="row justify-content-center">
+            <% images.forEach(image => { %>
+
+            <div class="col-xl-3 col-lg-4 col-md-6 mb-4 cemter text-center">
+              <img class="col-xl-6 col-lg-4 col-md-6 mb-4" src="/<%= image %>" alt="<%= image %>">
+              <div class="bg-white rounded shadow-sm">
+                <div class="p-4">
+                  <h5> <a href="#" class="text-dark">VIEW IMAGE</a></h5>
+
+                </div>
+              </div>
+            </div>
+            <% }); %>
+
+          </div>
+          <!-- VIDEO GALLERY -->
+          <div class="justify-content-center row">
+            <% videos.forEach(video => { %>
+            <div class="card col-xl-3 col-lg-4 col-md-6 m-4 text-center">
+              <video class="" controls>
+                <source src="/<%= video %>" type="video/mp4">
+                video tag is unsupported by yurr browser.
+              </video>
+
+            </div>
+            <% }); %>
+
+          </div>
+          <!-- End -->
+
+        </div>
+      </div>
+    </div>
+
+    </div>
