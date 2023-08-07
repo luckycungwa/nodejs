@@ -1,6 +1,8 @@
 const express = require("express");
 const path = require("path");
 const morgan = require("morgan"); // import morgan
+const bodyParser = require("body-parser");
+const admin = require("firebase-admin");
 
 const app = express();
 const PORT = process.env.PORT || 3000; // set up on port 3k if not taken
@@ -12,10 +14,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public"))); //Serves static files from the 'public' directory|| array
 
 // firebase stuff
-const admin = require("firebase-admin");
 const credentials = require("./key.json");
-
 admin.initializeApp({ credentials: admin.credential.cert(credentials) });
+
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 // setup database stuff
 const db = admin.firestore();
 app.use(express.json());
@@ -80,41 +82,40 @@ app.get("/profile", (req, res) => {
 });
 
 // POST ENDPOINT | MAIN LOGIN HANDLER || ASYNC with tryCatch error approach
-app.post("/profile", async (req, res) => {
+app.post("/user_form", async (req, res) => {
   try {
     const userProfile = {
       email: req.body.email,
       password: req.body.password, //encrypt password if not testing
     };
+    // Store on the database
+    const createProfile = await db.collection("user_profiles").add(userProfile);
 
-    const response = await db.collection("Users").add(userProfile);
+    logRunPoints("Authenticating login...");
 
-    logRunPoints("Data Recorded on db");
     // validate credentials within dummy users (must use Db later)
-    // const user = users.find(
-    //   (u) => u.username === email && u.password === password
-    // );
+    const user = users.find(
+      (u) =>
+        u.username === userProfile.email && u.password === userProfile.password
+    );
 
-    // // if credentials match send user to new success page or handle erros
-    // if (email != "user1@mlab.com" && password != "password") {
-    //   logRunPoints("Login Successful");
-    //   // res.render('profile', { message: 'LOG IN SUCCESSFUL!', email: email });
-    //   loadUserInfo();
-    // } else {
-    //   logRunPoints("Invalid credentials. Try Again!");
-    //   // res.render('home', { message: 'Login Failed. Try Again!' });
-    //   // logRunPoints(`username was: ${u.username}`);
-    // }
-    // Redirect to profile page or do something else after successful addition
-    //res.redirect("/profile");
-    res.send(response);
+    if (user) {
+      // User login is successful
+      logRunPoints("Login Successful");
+      loadUserInfo();
+      res.redirect("/profile");
+    } else {
+      // Invalid credentials
+      logRunPoints("Invalid credentials. Try Again!");
+      res.render("home", { message: "Login Failed. Try Again!" });
+    }
   } catch (error) {
-    logRunPoints("Error: Login failed!");
+    logRunPoints("Error: Login failed! ");
+
     console.error(error);
-    // Handle the error gracefully, e.g., render an error page
-    
-    // res.render('home', { message: 'An error occurred. Please try again later.' });
-    res.end();
+
+    // Render something to visuallly alert user
+    window.alert("sometext");
   }
 });
 
